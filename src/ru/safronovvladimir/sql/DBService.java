@@ -14,5 +14,4 @@ public class DBService {
     }
     sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
   }
-
 }
