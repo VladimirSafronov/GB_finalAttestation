@@ -38,7 +38,7 @@ public class Animal {
     return commands;
   }
 
-  public void addCommands(String command) {
+  public void addCommand(String command) {
     commands.add(command);
   }
 
