@@ -11,11 +11,19 @@ import ru.safronovvladimir.model.Hamster;
 import ru.safronovvladimir.model.Horse;
 import ru.safronovvladimir.model.TypeAnimal;
 
-public class AnimalManagementServiceImpl implements AnimalManagementService, AnimalStoragePort {
+public class AnimalManagementServiceImpl implements AnimalManagementService {
+
+  private AnimalStoragePort animalStorage;
+
+  public AnimalManagementServiceImpl() {
+    //TODO create AnimalStoragePort
+//    AnimalStoragePort animalStorage = new;
+  }
 
   @Override
   public void addAnimal(String name, LocalDate dateOfBirth, TypeAnimal type) {
-    Animal animal;
+    //логирование (достаточно саут)
+    Animal animal = null;
     switch (type) {
       case CAT:
         animal = new Cat(name, dateOfBirth);
@@ -29,14 +37,10 @@ public class AnimalManagementServiceImpl implements AnimalManagementService, Ani
         animal = new Camel(name, dateOfBirth);
       case DONKEY:
         animal = new Donkey(name, dateOfBirth);
+      default:
+        //создать AnimalTypeNotFoundTypeException
     }
-    //запись в БД
-  }
-
-  @Override
-  public List<String> getCommands(Animal animal) {
-    //чтение из БД
-    return animal.getCommands();
+    animalStorage.saveAnimal(animal);
   }
 
   @Override
