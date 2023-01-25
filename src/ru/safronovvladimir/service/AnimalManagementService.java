@@ -9,5 +9,7 @@ public interface AnimalManagementService {
 
   void addAnimal(String name, LocalDate dateOfBirth, TypeAnimal type);
 
-  void educateCommands(Animal animal, String... command);
+  void educateCommands(String name, String... command);
+
+  List<String> getAllCommands(String name);
 }
