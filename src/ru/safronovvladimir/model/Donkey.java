@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class Donkey extends PackAnimal {
 
-  public Donkey(String name, LocalDate dateOfBirth) {
-    super(name, dateOfBirth);
+  public Donkey(String name, LocalDate dateOfBirth, TypeAnimal type) {
+    super(name, dateOfBirth, type);
   }
 }

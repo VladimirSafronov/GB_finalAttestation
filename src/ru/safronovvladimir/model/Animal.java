@@ -9,13 +9,15 @@ public class Animal {
 
   private String name;
   private LocalDate dateOfBirth;
-  private final List<String> commands;
+  private List<String> commands;
+  private TypeAnimal type;
 
-  public Animal(String name, LocalDate dateOfBirth) {
+  public Animal(String name, LocalDate dateOfBirth, TypeAnimal type) {
     Objects.requireNonNull(name, "name mustn't be null");
     this.name = name;
     this.dateOfBirth = dateOfBirth;
     this.commands = new ArrayList<>();
+    this.type = type;
   }
 
   public String getName() {
@@ -42,12 +44,21 @@ public class Animal {
     commands.add(command);
   }
 
+  public TypeAnimal getType() {
+    return type;
+  }
+
+  public void setType(TypeAnimal type) {
+    this.type = type;
+  }
+
   @Override
   public String toString() {
     return "Animal{" +
         "name='" + name + '\'' +
         ", dateOfBirth=" + dateOfBirth +
         ", commands=" + commands +
+        ", type=" + type +
         '}';
   }
 }
