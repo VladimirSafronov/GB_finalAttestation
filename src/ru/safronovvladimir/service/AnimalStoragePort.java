@@ -7,5 +7,5 @@ public interface AnimalStoragePort {
 
   void saveAnimal(Animal animal);
 
-  void writeCommands(String name, List<String> commands);
+  void recordCommands(int id, List<String> commands);
 }

@@ -3,6 +3,7 @@ package ru.safronovvladimir.sql;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 
 public class SqlHelper {
 
@@ -10,6 +11,7 @@ public class SqlHelper {
 
   public SqlHelper(ConnectionFactory connectionFactory) {
     this.connectionFactory = connectionFactory;
+
   }
 
   public void execute(String sql) {
@@ -27,14 +29,16 @@ public class SqlHelper {
 
   public <T> T transactionalExecute(SqlTransaction<T> executor) {
     try (Connection conn = connectionFactory.getConnection()) {
+      Savepoint savepoint = conn.setSavepoint("savepoint");
       try {
         conn.setAutoCommit(false);
         T res = executor.execute(conn);
         conn.commit();
         return res;
       } catch (SQLException e) {
-        conn.rollback();
-        throw new RuntimeException(e);
+        conn.rollback(savepoint);
+        System.out.println(e.getMessage());
+        throw e;
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
