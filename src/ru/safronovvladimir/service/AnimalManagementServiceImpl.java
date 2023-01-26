@@ -3,6 +3,8 @@ package ru.safronovvladimir.service;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -65,30 +67,60 @@ public class AnimalManagementServiceImpl implements AnimalManagementService {
   @Override
   public void educateCommands(int id, String... command) {
     LOG.info("educateCommands id = " + id);
-    List<String> animalCommands = getAllCommands(id);
-    if (animalCommands.get(0).equals("")) {
-      animalCommands.remove(0);
-    }
+    List<String> animalCommands = getCommands(id);
     animalCommands.addAll(Arrays.asList(command));
     animalStorage.recordCommands(id, animalCommands);
   }
 
   @Override
-  public List<String> getAllCommands(int id) {
+  public List<Animal> getAllAnimals() {
+    LOG.info("getAllAnimals");
+    List<Animal> allAnimals = new ArrayList<>();
+    sqlHelper.transactionalExecute(conn -> {
+      try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM actual_animals")) {
+        try (ResultSet rs = ps.executeQuery()) {
+          while (rs.next()) {
+            Animal animal = new Animal(
+                rs.getString("name"),
+                LocalDate.parse(rs.getString("dateOfBirth")),
+                TypeAnimal.valueOf(rs.getString("animal_type").toUpperCase()));
+            int id = rs.getInt("id");
+            animal.setId(id);
+            animal.setCommands(getAllAnimalCommands(id));
+            allAnimals.add(animal);
+          }
+        }
+      }
+      return null;
+    });
+    return allAnimals;
+  }
+
+  @Override
+  public List<String> getAllAnimalCommands(int id) {
     LOG.info("getAllCommands id = " + id);
     return sqlHelper.transactionalExecute(conn -> {
       List<String> commands;
       try (PreparedStatement ps = conn.prepareStatement(
           "SELECT * FROM actual_animals WHERE id = ?")) {
         ps.setInt(1, id);
-        ResultSet rs = ps.executeQuery();
-        if (!rs.next()) {
-          LOG.warning("There isn't animal with id " + id);
-          throw new NotExistAnimalException();
+        try (ResultSet rs = ps.executeQuery()) {
+          if (!rs.next()) {
+            LOG.warning("There isn't animal with id " + id);
+            throw new NotExistAnimalException();
+          }
+          commands = StringUtil.toList(rs.getString("commands"));
         }
-        commands = StringUtil.toList(rs.getString("commands"));
       }
       return commands;
     });
+  }
+
+  private List<String> getCommands(int id) {
+    List<String> animalCommands = getAllAnimalCommands(id);
+    if (animalCommands.get(0).equals("")) {
+      animalCommands.remove(0);
+    }
+    return animalCommands;
   }
 }
