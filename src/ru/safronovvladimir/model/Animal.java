@@ -7,6 +7,7 @@ import java.util.Objects;
 
 public class Animal {
 
+  private int id;
   private String name;
   private LocalDate dateOfBirth;
   private List<String> commands;
@@ -18,6 +19,11 @@ public class Animal {
     this.dateOfBirth = dateOfBirth;
     this.commands = new ArrayList<>();
     this.type = type;
+  }
+
+
+  public int getId() {
+    return id;
   }
 
   public String getName() {
@@ -55,7 +61,8 @@ public class Animal {
   @Override
   public String toString() {
     return "Animal{" +
-        "name='" + name + '\'' +
+        "id=" + id +
+        ", name='" + name + '\'' +
         ", dateOfBirth=" + dateOfBirth +
         ", commands=" + commands +
         ", type=" + type +

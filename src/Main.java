@@ -14,9 +14,13 @@ public class Main {
     LocalDate exDate = LocalDate.of(2000, 1, 1);
     AnimalManagementService manager = Config.get().getAnimalManagementService();
 
-//    List<String> commands = manager.getAllCommands("Greta");
-//    System.out.println(commands);
+//    Animal animal = new Animal("WildOldCat", LocalDate.of(2000,1,1), TypeAnimal.CAT);
+//    manager.addAnimal(animal);
 
-    manager.educateCommands("Leopold", "command1", "command2");
+    manager.educateCommands(36, "eat");
+
+    List<String> commands = manager.getAllCommands(36);
+    System.out.println(commands);
+
   }
 }

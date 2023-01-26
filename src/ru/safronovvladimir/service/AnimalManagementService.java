@@ -7,9 +7,10 @@ import ru.safronovvladimir.model.TypeAnimal;
 
 public interface AnimalManagementService {
 
-  void addAnimal(String name, LocalDate dateOfBirth, TypeAnimal type);
+  void addAnimal(Animal animal);
 
-  void educateCommands(String name, String... command);
+  void educateCommands(int id, String... command);
 
-  List<String> getAllCommands(String name);
+  List<String> getAllCommands(int id);
+
 }

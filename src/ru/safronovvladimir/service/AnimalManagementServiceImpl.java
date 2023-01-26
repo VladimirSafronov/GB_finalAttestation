@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -27,27 +26,30 @@ public class AnimalManagementServiceImpl implements AnimalManagementService {
       throw new IllegalStateException(e);
     }
     sqlHelper = new SqlHelper(() -> DriverManager.getConnection(dbUrl, dbUser, dbPassword));
+
     animalStorage = new AnimalStoragePort() {
       @Override
       public void saveAnimal(Animal animal) {
         sqlHelper.transactionalExecute(conn -> {
           try (PreparedStatement ps = conn.prepareStatement(
-              "INSERT INTO actual_animals (name, dateOfBirth, commands, animal_type) VALUES (?,?,?,?)")) {
+              "INSERT INTO actual_animals (name, dateOfBirth, animal_type, commands) VALUES (?,?,?,?)")) {
             ps.setString(1, animal.getName());
-            ps.setDate(2, (Date) DateUtil.asDate(animal.getDateOfBirth()));
-            ps.setString(3, StringUtil.parse(animal.getCommands()));
-            ps.setString(4, String.valueOf(animal.getType()));
+            ps.setDate(2, DateUtil.asDate(animal.getDateOfBirth()));
+            ps.setString(3, String.valueOf(animal.getType()));
+            ps.setString(4, "");
+            ps.execute();
           }
           return null;
         });
       }
 
-      @Override
-      public void writeCommands(String name, List<String> commands) {
+      public void recordCommands(int id, List<String> commands) {
         sqlHelper.transactionalExecute(conn -> {
           try (PreparedStatement ps = conn.prepareStatement(
-              "INSERT INTO actual_animals (commands) WHERE name = " + name + " VALUES (?)")) {
+              "UPDATE actual_animals SET commands = ? WHERE id = ?")) {
             ps.setString(1, StringUtil.parse(commands));
+            ps.setInt(2, id);
+            ps.execute();
           }
           return null;
         });
@@ -56,51 +58,33 @@ public class AnimalManagementServiceImpl implements AnimalManagementService {
   }
 
   @Override
-  public void addAnimal(String name, LocalDate dateOfBirth, TypeAnimal type) {
-    LOG.info("addAnimal " + name);
-    Animal animal;
-    switch (type) {
-      case CAT:
-        animal = new Cat(name, dateOfBirth, type);
-      case DOG:
-        animal = new Dog(name, dateOfBirth, type);
-      case HAMSTER:
-        animal = new Hamster(name, dateOfBirth, type);
-      case HORSE:
-        animal = new Horse(name, dateOfBirth, type);
-      case CAMEL:
-        animal = new Camel(name, dateOfBirth, type);
-      case DONKEY:
-        animal = new Donkey(name, dateOfBirth, type);
-      default:
-        LOG.warning(type + " - this type isn't exist");
-        throw new AnimalTypeNotFoundTypeException();
-    }
-//    animalStorage.saveAnimal(animal);
+  public void addAnimal(Animal animal) {
+    LOG.info("addAnimal " + animal.getName());
+    animalStorage.saveAnimal(animal);
   }
 
   @Override
-  public void educateCommands(String name, String... command) {
-    LOG.info("educateCommands " + name);
-    List<String> animalCommands = getAllCommands(name);
+  public void educateCommands(int id, String... command) {
+    LOG.info("educateCommands id = " + id);
+    List<String> animalCommands = getAllCommands(id);
     if (animalCommands.get(0).equals("")) {
       animalCommands.remove(0);
     }
     animalCommands.addAll(Arrays.asList(command));
-    animalStorage.writeCommands(name, animalCommands);
+    animalStorage.recordCommands(id, animalCommands);
   }
 
   @Override
-  public List<String> getAllCommands(String name) {
-    LOG.info("getAllCommands " + name);
+  public List<String> getAllCommands(int id) {
+    LOG.info("getAllCommands id = " + id);
     return sqlHelper.transactionalExecute(conn -> {
       List<String> commands;
       try (PreparedStatement ps = conn.prepareStatement(
-          "SELECT * FROM actual_animals WHERE name = ?")) {
-        ps.setString(1, name);
+          "SELECT * FROM actual_animals WHERE id = ?")) {
+        ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
         if (!rs.next()) {
-          LOG.warning("There isn't animal with name " + name);
+          LOG.warning("There isn't animal with id " + id);
           throw new NotExistAnimalException();
         }
         commands = StringUtil.toList(rs.getString("commands"));
