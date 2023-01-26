@@ -26,6 +26,10 @@ public class Animal {
     return id;
   }
 
+  public void setId(int id) {
+    this.id = id;
+  }
+
   public String getName() {
     return name;
   }
@@ -46,8 +50,8 @@ public class Animal {
     return commands;
   }
 
-  public void addCommand(String command) {
-    commands.add(command);
+  public void setCommands(List<String> commands) {
+    this.commands = commands;
   }
 
   public TypeAnimal getType() {

@@ -1,9 +1,7 @@
 package ru.safronovvladimir.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import ru.safronovvladimir.model.Animal;
-import ru.safronovvladimir.model.TypeAnimal;
 
 public interface AnimalManagementService {
 
@@ -11,6 +9,8 @@ public interface AnimalManagementService {
 
   void educateCommands(int id, String... command);
 
-  List<String> getAllCommands(int id);
+  List<Animal> getAllAnimals();
+
+  List<String> getAllAnimalCommands(int id);
 
 }
