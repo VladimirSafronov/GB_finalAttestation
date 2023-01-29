@@ -2,7 +2,6 @@ package ru.safronovvladimir.sql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
@@ -30,14 +29,14 @@ public class SqlHelper {
 
   public <T> T transactionalExecute(SqlTransaction<T> executor) {
     try (Connection conn = connectionFactory.getConnection()) {
-      Savepoint savepoint = conn.setSavepoint("savepoint");
+//      Savepoint savepoint = conn.setSavepoint("savepoint");
       try {
         conn.setAutoCommit(false);
         T res = executor.execute(conn);
         conn.commit();
         return res;
       } catch (SQLException e) {
-        conn.rollback(savepoint);
+        conn.rollback();
         System.out.println(e.getMessage());
         throw e;
       }

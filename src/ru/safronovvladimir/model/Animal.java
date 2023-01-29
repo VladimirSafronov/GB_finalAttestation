@@ -13,6 +13,9 @@ public class Animal {
   private List<String> commands;
   private TypeAnimal type;
 
+  public Animal() {
+  }
+
   public Animal(String name, LocalDate dateOfBirth, TypeAnimal type) {
     Objects.requireNonNull(name, "name mustn't be null");
     this.name = name;

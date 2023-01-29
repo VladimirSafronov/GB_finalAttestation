@@ -9,10 +9,9 @@
     <title>Animals list</title>
 </head>
 <body>
-<%--<jsp:include page="fragments/header.jsp"/>--%>
 <section>
-<%--    <a href="resume?action=add"><img src="img/add.png"></a>--%>
-<%--    <br>--%>
+    <a href="animal?action=add"><img src="img/add.png"></a>
+    <br>
     <table border="1" cellpadding="8" cellspacing="0">
         <tr>
             <th>id</th>
@@ -22,13 +21,16 @@
         <c:forEach items="${animals}" var="animal">
             <jsp:useBean id="animal" type="ru.safronovvladimir.model.Animal"/>
             <tr>
-                <td><a href="animal?id=${animal.id}">${animal.id}</a></td>
+                <td><a href="animal?id=${animal.id}&action=view">${animal.id}</a></td>
                 <td>${animal.name}</td>
                 <td>${animal.type}</td>
+                <td><a href="animal?id=${animal.id}&action=delete"><img
+                        src="img/delete.png"></a></td>
+                <td><a href="animal?id=${animal.id}&action=edit"><img src="img/pencil.png"></a>
+                </td>
             </tr>
         </c:forEach>
     </table>
 </section>
-<%--<jsp:include page="fragments/footer.jsp"/>--%>
 </body>
 </html>

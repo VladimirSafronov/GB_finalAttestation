@@ -15,13 +15,17 @@ public class Main {
 
 //    manager.educateCommands(36, "eat");
 //
-//    List<String> commands = manager.getAllAnimalCommands(36);
+//    List<String> commands = manager.getAllAnimalCommands(2);
 //    System.out.println(commands);
-
+//
     List<Animal> animalList = manager.getAllAnimals();
     for (Animal a : animalList) {
       System.out.println(a);
     }
+
+//    manager.delete(36);
+
+//    System.out.println(manager.get(2));
 
   }
 }

@@ -16,7 +16,7 @@ public class Config {
   public static Config get() {
     if (INSTANCE == null) {
       Properties properties = new Properties();
-      File fileWithProperties = new File( getHomeDir(), "config/humanFriends.properties");
+      File fileWithProperties = new File(getHomeDir(), "config/humanFriends.properties");
 
       try (InputStream is = Files.newInputStream(fileWithProperties.toPath())) {
         properties.load(is);
