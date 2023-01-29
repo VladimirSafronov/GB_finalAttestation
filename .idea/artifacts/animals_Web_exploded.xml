@@ -10,6 +10,8 @@
         <element id="directory" name="lib">
           <element id="file-copy" path="$PROJECT_DIR$/lib/mysql-connector-j-8.0.32.jar" />
           <element id="library" level="project" name="gson-2.7" />
+          <element id="file-copy" path="$PROJECT_DIR$/lib/jstl-1.2.jar" />
+          <element id="library" level="project" name="javax.servlet-api-4.0.1" />
         </element>
       </element>
     </root>

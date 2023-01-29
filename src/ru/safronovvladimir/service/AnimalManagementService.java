@@ -13,4 +13,7 @@ public interface AnimalManagementService {
 
   List<String> getAllAnimalCommands(int id);
 
+  void delete(int id);
+
+  Animal get(int id);
 }

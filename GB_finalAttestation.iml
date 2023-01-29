@@ -25,7 +25,9 @@
           <root url="jar://$MODULE_DIR$/lib/mysql-connector-j-8.0.32.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/mysql-connector-j-8.0.32-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="library" name="gson-2.7" level="project" />
@@ -36,7 +38,9 @@
           <root url="jar://$MODULE_DIR$/lib/javax.servlet-api-4.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="jar://$USER_HOME$/.ideaLibSources/javax.servlet-api-4.0.1-sources.jar!/" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" scope="PROVIDED">

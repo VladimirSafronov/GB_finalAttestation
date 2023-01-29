@@ -3,6 +3,7 @@ package ru.safronovvladimir.service;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +63,7 @@ public class AnimalManagementServiceImpl implements AnimalManagementService {
   public void addAnimal(Animal animal) {
     LOG.info("addAnimal " + animal.getName());
     animalStorage.saveAnimal(animal);
+    Counter.add();
   }
 
   @Override
@@ -80,14 +82,7 @@ public class AnimalManagementServiceImpl implements AnimalManagementService {
       try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM actual_animals")) {
         try (ResultSet rs = ps.executeQuery()) {
           while (rs.next()) {
-            Animal animal = new Animal(
-                rs.getString("name"),
-                LocalDate.parse(rs.getString("dateOfBirth")),
-                TypeAnimal.valueOf(rs.getString("animal_type").toUpperCase()));
-            int id = rs.getInt("id");
-            animal.setId(id);
-            animal.setCommands(getAllAnimalCommands(id));
-            allAnimals.add(animal);
+            allAnimals.add(getAnimalWithResultSet(rs));
           }
         }
       }
@@ -116,11 +111,57 @@ public class AnimalManagementServiceImpl implements AnimalManagementService {
     });
   }
 
+  @Override
+  public void delete(int id) {
+    LOG.info("delete animal with id = " + id);
+    sqlHelper.execute("DELETE FROM actual_animals WHERE id = ?", ps -> {
+      ps.setInt(1, id);
+      if (ps.executeUpdate() == 0) {
+        throw new NotExistAnimalException();
+      }
+      return null;
+    });
+  }
+
+  @Override
+  public Animal get(int id) {
+    LOG.info("get animal with id = " + id);
+    return sqlHelper.transactionalExecute(conn -> {
+      try (PreparedStatement ps = conn.prepareStatement(
+          "SELECT * FROM actual_animals WHERE id = ?")) {
+        ps.setInt(1, id);
+        try (ResultSet rs = ps.executeQuery()) {
+          if (!rs.next()) {
+            LOG.warning("There isn't animal with id " + id);
+            throw new NotExistAnimalException();
+          }
+          return getAnimalWithResultSet(rs);
+        }
+      }
+    });
+  }
+
   private List<String> getCommands(int id) {
     List<String> animalCommands = getAllAnimalCommands(id);
     if (animalCommands.get(0).equals("")) {
       animalCommands.remove(0);
     }
     return animalCommands;
+  }
+
+  private Animal getAnimalWithResultSet(ResultSet rs) {
+    Animal animal;
+    try {
+      animal = new Animal(
+          rs.getString("name"),
+          LocalDate.parse(rs.getString("dateOfBirth")),
+          TypeAnimal.valueOf(rs.getString("animal_type").toUpperCase()));
+      int animalId = rs.getInt("id");
+      animal.setId(animalId);
+      animal.setCommands(getAllAnimalCommands(animalId));
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return animal;
   }
 }
