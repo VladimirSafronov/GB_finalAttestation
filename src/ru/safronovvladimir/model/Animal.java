@@ -1,5 +1,6 @@
 package ru.safronovvladimir.model;
 
+import com.sun.istack.internal.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
